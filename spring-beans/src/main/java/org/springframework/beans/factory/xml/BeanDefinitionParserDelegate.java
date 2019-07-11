@@ -397,6 +397,8 @@ public class BeanDefinitionParserDelegate {
 
 
 	/**
+	 * 解析提供的<bean>元素。如果在解析期间出现错误，则可能返回null。
+	 * 将错误报告给org.springframework.beans.factory.parsing.ProblemReporter
 	 * Parses the supplied {@code <bean>} element. May return {@code null}
 	 * if there were errors during parse. Errors are reported to the
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
@@ -413,16 +415,18 @@ public class BeanDefinitionParserDelegate {
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
-		String id = ele.getAttribute(ID_ATTRIBUTE);
-		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
+		String id = ele.getAttribute(ID_ATTRIBUTE);//id属性
+		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);//name属性
 
 		List<String> aliases = new ArrayList<>();
 		if (StringUtils.hasLength(nameAttr)) {
+			//分割
 			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
-			aliases.addAll(Arrays.asList(nameArr));
+			aliases.addAll(Arrays.asList(nameArr));//放到 别名集合
 		}
 
 		String beanName = id;
+		//id为空,name不为空.使用第一个name作为bean的名字
 		if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
 			beanName = aliases.remove(0);
 			if (logger.isTraceEnabled()) {
