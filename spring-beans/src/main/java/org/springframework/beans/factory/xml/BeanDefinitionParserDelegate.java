@@ -68,6 +68,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 
 /**
+ * 用于解析XML bean定义的有状态委托类。 旨在供主解析器和任何扩展BeanDefinitionParsers或BeanDefinitionDecorators使用。
  * Stateful delegate class used to parse XML bean definitions.
  * Intended for use by both the main parser and any extension
  * {@link BeanDefinitionParser BeanDefinitionParsers} or
@@ -1461,6 +1462,9 @@ public class BeanDefinitionParserDelegate {
 	}
 
 	/**
+	 * 确定提供的节点的名称是否等于提供的名称。
+	 * 默认实现针对Node.getNodeName（）和Node.getLocalName（）检查提供的所需名称。
+	 * 子类可以覆盖默认实现，以提供用于比较节点名称的不同机制。
 	 * Determine whether the name of the supplied node is equal to the supplied name.
 	 * <p>The default implementation checks the supplied desired name against both
 	 * {@link Node#getNodeName()} and {@link Node#getLocalName()}.
@@ -1473,10 +1477,20 @@ public class BeanDefinitionParserDelegate {
 		return desiredName.equals(node.getNodeName()) || desiredName.equals(getLocalName(node));
 	}
 
+	/**
+	 * 是否使用默认命名空间
+	 * @param namespaceUri
+	 * @return
+	 */
 	public boolean isDefaultNamespace(@Nullable String namespaceUri) {
 		return (!StringUtils.hasLength(namespaceUri) || BEANS_NAMESPACE_URI.equals(namespaceUri));
 	}
 
+	/**
+	 * 是否使用默认命名空间
+	 * @param node
+	 * @return
+	 */
 	public boolean isDefaultNamespace(Node node) {
 		return isDefaultNamespace(getNamespaceURI(node));
 	}

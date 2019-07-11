@@ -152,6 +152,8 @@ public abstract class StringUtils {
 	}
 
 	/**
+	 * 检查给定的String是否包含实际文本。
+	 * 更具体地说，如果String不为null，其长度大于0，并且它至少包含一个非空白字符，则此方法返回true。
 	 * Check whether the given {@code String} contains actual <em>text</em>.
 	 * <p>More specifically, this method returns {@code true} if the
 	 * {@code String} is not {@code null}, its length is greater than 0,

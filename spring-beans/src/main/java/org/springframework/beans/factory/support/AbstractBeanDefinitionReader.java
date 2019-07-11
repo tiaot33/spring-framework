@@ -216,12 +216,15 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 			throw new BeanDefinitionStoreException(
 					"Cannot load bean definitions from location [" + location + "]: no ResourceLoader available");
 		}
-
+		//属于ResourcePatternResolver，即需要路径匹配
 		if (resourceLoader instanceof ResourcePatternResolver) {
 			// Resource pattern matching available.
 			try {
+				// 获得 Resource 数组，因为 Pattern 模式匹配下，可能有多个 Resource 。例如说，Ant 风格的 location,classpath*: ...
 				Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+				//加载 BeanDefinition 们 （递归）
 				int count = loadBeanDefinitions(resources);
+				//加入actualResources集合
 				if (actualResources != null) {
 					Collections.addAll(actualResources, resources);
 				}
@@ -237,6 +240,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		}
 		else {
 			// Can only load single resources by absolute URL.
+			//不是 pattern 匹配模式 ，可以简单的加载单个 Resource
 			Resource resource = resourceLoader.getResource(location);
 			int count = loadBeanDefinitions(resource);
 			if (actualResources != null) {
