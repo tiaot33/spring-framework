@@ -20,6 +20,8 @@ import org.springframework.beans.factory.parsing.DefaultsDefinition;
 import org.springframework.lang.Nullable;
 
 /**
+ * 包含了
+ * 文档中<beans>级别指定的默认值：default-lazy-init，default-autowire等。<br/><br/>
  * Simple JavaBean that holds the defaults specified at the {@code <beans>}
  * level in a standard Spring XML bean definition document:
  * {@code default-lazy-init}, {@code default-autowire}, etc.

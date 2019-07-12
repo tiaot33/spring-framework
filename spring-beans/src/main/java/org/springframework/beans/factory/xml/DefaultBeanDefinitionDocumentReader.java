@@ -40,6 +40,8 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>被 XmlBeanDefinitionReader 调用，保存了 BeanDefinitionParserDelegate 的解析委托类</p>
+ *
  * Default implementation of the {@link BeanDefinitionDocumentReader} interface that
  * reads bean definitions according to the "spring-beans" DTD and XSD format
  * (Spring's default XML bean definition format).
@@ -115,6 +117,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 
 	/**
+	 * 解析Document从此方法开始
 	 * BeanDefinitions解析前的profiles处理
 	 * Register each bean definition within the given root {@code <beans/>} element.
 	 */

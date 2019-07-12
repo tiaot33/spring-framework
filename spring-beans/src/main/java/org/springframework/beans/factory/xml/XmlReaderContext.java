@@ -77,6 +77,7 @@ public class XmlReaderContext extends ReaderContext {
 	}
 
 	/**
+	 * 获得XmlBeanDefinitionReader
 	 * Return the bean definition registry to use.
 	 * @see XmlBeanDefinitionReader#XmlBeanDefinitionReader(BeanDefinitionRegistry)
 	 */
