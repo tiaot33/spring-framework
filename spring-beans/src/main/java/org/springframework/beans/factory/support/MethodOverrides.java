@@ -26,7 +26,7 @@ import org.springframework.lang.Nullable;
 /**
  * Set of method overrides, determining which, if any, methods on a
  * managed object the Spring IoC container will override at runtime.
- *
+ * <lookup-method name="getCar" bean="hongqi"/> lookup-method属性能用到
  * <p>The currently supported {@link MethodOverride} variants are
  * {@link LookupOverride} and {@link ReplaceOverride}.
  *
