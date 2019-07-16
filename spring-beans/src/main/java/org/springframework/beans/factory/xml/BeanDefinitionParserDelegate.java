@@ -723,8 +723,12 @@ public class BeanDefinitionParserDelegate {
 	}
 
 	/**
+	 *
 	 * <bean id="studentService" class="org.springframework.core.service.StudentService">
 	 *     <constructor-arg index="0" value="chenssy"/>
+	 *     <constructor- arg index=” 1 ” >
+	 * 			<value＞郝佳</value>
+	 * 		</constructor- arg>
 	 *     <constructor-arg name="age" value="100"/>
 	 *     <constructor-arg name="bookService" ref="bookService"/>
 	 * </bean>
@@ -820,8 +824,17 @@ public class BeanDefinitionParserDelegate {
 	}
 
 	/**
+	 * Element参数是constructor-arg元素
 	 * Parse a constructor-arg element.
 	 */
+	//<bean id="studentService" class="org.springframework.core.service.StudentService">
+	//	<constructor-arg index="0" value="chenssy"/>
+	//	<constructor-arg index=” 1 ” >
+	//			<value＞郝佳</value>
+	//	</constructor-arg>
+	//	<constructor-arg name="age" value="100"/>
+	//	<constructor-arg name="bookService" ref="bookService"/>
+	//</bean>
 	public void parseConstructorArgElement(Element ele, BeanDefinition bd) {
 		//提取 index、type、name 属性值
 		String indexAttr = ele.getAttribute(INDEX_ATTRIBUTE);
@@ -836,6 +849,7 @@ public class BeanDefinitionParserDelegate {
 				}
 				else {
 					try {
+						//构造 ConstructorArgumentEntry 对象并将其加入到 ParseState 队列中。ConstructorArgumentEntry 表示构造函数的参数
 						this.parseState.push(new ConstructorArgumentEntry(index));
 						//解析 ele 对应属性元素
 						Object value = parsePropertyValue(ele, bd, null);
@@ -958,11 +972,13 @@ public class BeanDefinitionParserDelegate {
 	}
 
 	/**
+	 * 获取属性元素的值。可能是 list 等。也用于constructor arguments构造函数参数，“propertyName”在这种情况下为null。
 	 * Get the value of a property element. May be a list etc.
 	 * Also used for constructor arguments, "propertyName" being null in this case.
 	 */
 	@Nullable
 	public Object parsePropertyValue(Element ele, BeanDefinition bd, @Nullable String propertyName) {
+		//propertyName为null是解析<constructor-arg>，不为null则是<property>
 		String elementName = (propertyName != null ?
 				"<property> element for property '" + propertyName + "'" :
 				"<constructor-arg> element");
@@ -970,6 +986,7 @@ public class BeanDefinitionParserDelegate {
 		// Should only have one child element: ref, value, list, etc.
 		NodeList nl = ele.getChildNodes();
 		Element subElement = null;
+		//遍历子元素
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (node instanceof Element && !nodeNameEquals(node, DESCRIPTION_ELEMENT) &&

@@ -21,6 +21,10 @@ import java.util.LinkedList;
 import org.springframework.lang.Nullable;
 
 /**
+ * 基于LinkedList的简单结构，用于在解析过程中跟踪逻辑位置。
+ * 在解析阶段期间，以读者特定的方式将 entries 添加到LinkedList。
+ * 调用toString（）将呈现解析阶段中当前逻辑位置的树型视图。此表示旨在用于错误消息
+ *
  * Simple {@link LinkedList}-based structure for tracking the logical position during
  * a parsing process. {@link Entry entries} are added to the LinkedList at
  * each point during the parse phase in a reader-specific manner.
