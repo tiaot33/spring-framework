@@ -72,6 +72,7 @@ public abstract class BeanFactoryUtils {
 	}
 
 	/**
+	 * 去除 name 的 & 前缀
 	 * Return the actual bean name, stripping out the factory dereference
 	 * prefix (if any, also stripping repeated factory prefixes if found).
 	 * @param name the name of the bean
@@ -83,6 +84,10 @@ public abstract class BeanFactoryUtils {
 		if (!name.startsWith(BeanFactory.FACTORY_BEAN_PREFIX)) {
 			return name;
 		}
+		//将 factory bean 加入到缓存之中，并去掉前缀
+		// computeIfAbsent 方法，分成两种情况：
+		//      1. 未存在，则进行计算执行，并将结果添加到缓存
+		//      2. 已存在，则直接返回，无需计算。
 		return transformedBeanNameCache.computeIfAbsent(name, beanName -> {
 			do {
 				beanName = beanName.substring(BeanFactory.FACTORY_BEAN_PREFIX.length());
