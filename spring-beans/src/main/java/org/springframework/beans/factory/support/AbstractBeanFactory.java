@@ -244,7 +244,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// 如果 name 是 alias ，则获取对应映射的 beanName 。
 		final String beanName = transformedBeanName(name);
 		Object bean;
-		//从缓存中或者实例工厂中获取 Bean 对象
+		//从缓存中或者实例工厂中获取 Bean 对象（可能是早期对象raw）
 		// Eagerly check singleton cache for manually registered singletons.
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
@@ -257,7 +257,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
-			// 完成 FactoryBean 的相关处理，并用来获取 FactoryBean 的处理结果
+			// 完成 FactoryBean 的相关处理(通过FactoryBean获取对应的Bean)，并用来获取 FactoryBean 的处理结果
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
@@ -1226,6 +1226,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	/**
 	 * Return a merged RootBeanDefinition, traversing the parent bean definition
 	 * if the specified bean corresponds to a child bean definition.
+	 *
+	 * 返回合并的RootBeanDefinition，如果指定的bean对应于子bean定义，则遍历父bean定义。
+	 *
 	 * @param beanName the name of the bean to retrieve the merged definition for
 	 * @return a (potentially merged) RootBeanDefinition for the given bean
 	 * @throws NoSuchBeanDefinitionException if there is no bean with the given name
@@ -1650,22 +1653,27 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
+	 * 获取给定bean实例的对象，如果是FactoryBean，则为bean实例本身或其创建的对象
 	 * Get the object for the given bean instance, either the bean
 	 * instance itself or its created object in case of a FactoryBean.
+	 * 不是FactoryBean则直接返回 beanInstance，FactoryBean则
 	 * @param beanInstance the shared bean instance
-	 * @param name name that may include factory dereference prefix
-	 * @param beanName the canonical bean name
-	 * @param mbd the merged bean definition
+	 * @param name name that may include factory dereference prefix 可能包含工厂解除引用前缀的名称
+	 * @param beanName the canonical bean name 规范的bean名称
+	 * @param mbd the merged bean definition 合并的bean定义
 	 * @return the object to expose for the bean
 	 */
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {
 
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
+		//判断 name 是否以 & 开头
 		if (BeanFactoryUtils.isFactoryDereference(name)) {
+			//如果是NullBean则直接返回
 			if (beanInstance instanceof NullBean) {
 				return beanInstance;
 			}
+			//如果bean不是factoryBean直接报错
 			if (!(beanInstance instanceof FactoryBean)) {
 				throw new BeanIsNotAFactoryException(beanName, beanInstance.getClass());
 			}
@@ -1674,6 +1682,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Now we have the bean instance, which may be a normal bean or a FactoryBean.
 		// If it's a FactoryBean, we use it to create a bean instance, unless the
 		// caller actually wants a reference to the factory.
+		//非factoryBean的直接返回，FactoryBean继续创建
 		if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
 			return beanInstance;
 		}
@@ -1682,14 +1691,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		if (mbd == null) {
 			object = getCachedObjectForFactoryBean(beanName);
 		}
+		//最后校验beanInstance是不是FactoryBean TODO 这里不是很懂
 		if (object == null) {
 			// Return bean instance from factory.
 			FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
 			// Caches object obtained from FactoryBean if it is a singleton.
+			//检测是否包含定义Bean（）
 			if (mbd == null && containsBeanDefinition(beanName)) {
+				//获得合并的RootBeanDefinition，如果指定的bean对应于子bean定义，则遍历父bean定义。todo 获得mbd有何意义，并没有保存
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
+			//是否由应用程序本身定义
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
+			//// 核心处理方法，使用 FactoryBean 获得 Bean 对象
 			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
 		}
 		return object;

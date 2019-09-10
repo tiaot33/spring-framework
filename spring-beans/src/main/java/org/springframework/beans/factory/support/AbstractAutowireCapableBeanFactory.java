@@ -937,6 +937,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
+	 * 获取早期访问指定bean的引用，通常用于解析循环引用。
 	 * Obtain a reference for early access to the specified bean,
 	 * typically for the purpose of resolving a circular reference.
 	 * @param beanName the name of the bean (for error handling purposes)
@@ -950,7 +951,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
-					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
+					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);//动态代理的实现不同，其他直接返回bean
 				}
 			}
 		}
