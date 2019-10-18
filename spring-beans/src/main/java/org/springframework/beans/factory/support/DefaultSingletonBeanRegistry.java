@@ -337,6 +337,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * 增加singletonsCurrentlyInCreation的标志
 	 * 单例创建之前的回调。默认实现将单例注册为当前创建时。
 	 * singletonsCurrentlyInCreation中放入Bean名
 	 * Callback before singleton creation.
@@ -351,6 +352,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * 移除singletonsCurrentlyInCreation的标志
 	 * Callback after singleton creation.
 	 * <p>The default implementation marks the singleton as not in creation anymore.
 	 * @param beanName the name of the singleton that has been created
