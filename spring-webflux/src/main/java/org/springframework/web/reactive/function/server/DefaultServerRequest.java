@@ -123,6 +123,11 @@ class DefaultServerRequest implements ServerRequest {
 	}
 
 	@Override
+	public Optional<InetSocketAddress> localAddress() {
+		return Optional.ofNullable(request().getLocalAddress());
+	}
+
+	@Override
 	public List<HttpMessageReader<?>> messageReaders() {
 		return this.messageReaders;
 	}
@@ -218,11 +223,6 @@ class DefaultServerRequest implements ServerRequest {
 	@Override
 	public Mono<MultiValueMap<String, Part>> multipartData() {
 		return this.exchange.getMultipartData();
-	}
-
-	@Override
-	public Flux<Part> parts() {
-		return this.exchange.getParts();
 	}
 
 	private ServerHttpRequest request() {

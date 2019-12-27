@@ -352,7 +352,7 @@ public abstract class RequestPredicates {
 		void pathExtension(String extension);
 
 		/**
-		 * Receive notification of a HTTP header predicate.
+		 * Receive notification of an HTTP header predicate.
 		 * @param name the name of the HTTP header to check
 		 * @param value the desired value of the HTTP header
 		 * @see RequestPredicates#headers(Predicate)
@@ -948,6 +948,11 @@ public abstract class RequestPredicates {
 		}
 
 		@Override
+		public Optional<InetSocketAddress> localAddress() {
+			return this.request.localAddress();
+		}
+
+		@Override
 		public List<HttpMessageReader<?>> messageReaders() {
 			return this.request.messageReaders();
 		}
@@ -1023,11 +1028,6 @@ public abstract class RequestPredicates {
 		@Override
 		public Mono<MultiValueMap<String, Part>> multipartData() {
 			return this.request.multipartData();
-		}
-
-		@Override
-		public Flux<Part> parts() {
-			return this.request.parts();
 		}
 
 		@Override

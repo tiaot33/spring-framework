@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.http.MediaType;
 
@@ -41,7 +41,7 @@ public class MappingMediaTypeFileExtensionResolverTests {
 	public void resolveExtensions() {
 		List<String> extensions = this.resolver.resolveFileExtensions(MediaType.APPLICATION_JSON);
 
-		assertThat(extensions).size().isEqualTo(1);
+		assertThat(extensions).hasSize(1);
 		assertThat(extensions.get(0)).isEqualTo("json");
 	}
 

@@ -16,7 +16,7 @@
 
 package org.springframework.beans;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +29,47 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PropertyAccessorUtilsTests {
 
 	@Test
+	public void getPropertyName() {
+		assertThat(PropertyAccessorUtils.getPropertyName("")).isEqualTo("");
+		assertThat(PropertyAccessorUtils.getPropertyName("[user]")).isEqualTo("");
+		assertThat(PropertyAccessorUtils.getPropertyName("user")).isEqualTo("user");
+	}
+
+	@Test
+	public void isNestedOrIndexedProperty() {
+		assertThat(PropertyAccessorUtils.isNestedOrIndexedProperty(null)).isFalse();
+		assertThat(PropertyAccessorUtils.isNestedOrIndexedProperty("")).isFalse();
+		assertThat(PropertyAccessorUtils.isNestedOrIndexedProperty("user")).isFalse();
+
+		assertThat(PropertyAccessorUtils.isNestedOrIndexedProperty("[user]")).isTrue();
+		assertThat(PropertyAccessorUtils.isNestedOrIndexedProperty("user.name")).isTrue();
+	}
+
+	@Test
+	public void getFirstNestedPropertySeparatorIndex() {
+		assertThat(PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex("[user]")).isEqualTo(-1);
+		assertThat(PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex("user.name")).isEqualTo(4);
+	}
+
+	@Test
+	public void getLastNestedPropertySeparatorIndex() {
+		assertThat(PropertyAccessorUtils.getLastNestedPropertySeparatorIndex("[user]")).isEqualTo(-1);
+		assertThat(PropertyAccessorUtils.getLastNestedPropertySeparatorIndex("user.address.street")).isEqualTo(12);
+	}
+
+	@Test
+	public void matchesProperty() {
+		assertThat(PropertyAccessorUtils.matchesProperty("user", "email")).isFalse();
+		assertThat(PropertyAccessorUtils.matchesProperty("username", "user")).isFalse();
+		assertThat(PropertyAccessorUtils.matchesProperty("admin[user]", "user")).isFalse();
+
+		assertThat(PropertyAccessorUtils.matchesProperty("user", "user")).isTrue();
+		assertThat(PropertyAccessorUtils.matchesProperty("user[name]", "user")).isTrue();
+	}
+
+	@Test
 	public void canonicalPropertyName() {
+		assertThat(PropertyAccessorUtils.canonicalPropertyName(null)).isEqualTo("");
 		assertThat(PropertyAccessorUtils.canonicalPropertyName("map")).isEqualTo("map");
 		assertThat(PropertyAccessorUtils.canonicalPropertyName("map[key1]")).isEqualTo("map[key1]");
 		assertThat(PropertyAccessorUtils.canonicalPropertyName("map['key1']")).isEqualTo("map[key1]");
@@ -43,6 +83,8 @@ public class PropertyAccessorUtilsTests {
 
 	@Test
 	public void canonicalPropertyNames() {
+		assertThat(PropertyAccessorUtils.canonicalPropertyNames(null)).isNull();
+
 		String[] original =
 				new String[] {"map", "map[key1]", "map['key1']", "map[\"key1\"]", "map[key1][key2]",
 											"map['key1'][\"key2\"]", "map[key1].name", "map['key1'].name", "map[\"key1\"].name"};
